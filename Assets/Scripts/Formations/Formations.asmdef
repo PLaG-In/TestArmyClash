@@ -1,0 +1,17 @@
+{
+    "name": "Formations",
+    "rootNamespace": "",
+    "references": [
+        "GUID:2caf206d6ecba7d46b8497163798e342",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
