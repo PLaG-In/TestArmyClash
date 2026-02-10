@@ -2,17 +2,17 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Zenject;
+using ArmyClash.Utilities;
 
 namespace ArmyClash.Core
 {
     /// <summary>
     /// Handles unit movement towards targets
-    /// Works purely with Unit models, communicates position updates via Unit.Position
+    /// Uses Constants from Utilities
     /// </summary>
     public class MovementController : ITickable
     {
         private readonly List<Unit> _units = new List<Unit>();
-        private const float MELEE_RANGE = 1f;
 
         public void RegisterUnit(Unit unit)
         {
@@ -41,17 +41,13 @@ namespace ArmyClash.Core
                     
                     float distance = Vector3.Distance(currentPos, targetPos);
 
-                    // Move if not in melee range
-                    if (distance > MELEE_RANGE)
+                    if (distance > Constants.MELEE_RANGE)
                     {
                         Vector3 direction = (targetPos - currentPos).normalized;
                         float moveSpeed = unit.Stats.Speed;
                         
                         Vector3 newPos = currentPos + direction * moveSpeed * Time.deltaTime;
                         unit.Position = newPos;
-                        
-                        // Note: View layer should subscribe to position changes
-                        // or poll unit.Position every frame
                     }
                 }
             }

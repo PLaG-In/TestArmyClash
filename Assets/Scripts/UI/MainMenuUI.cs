@@ -11,24 +11,27 @@ namespace ArmyClash.UI
     /// </summary>
     public class MainMenuUI : MonoBehaviour
     {
-        [Header("UI Elements")]
-        [SerializeField] private Button _startBattleButton;
-        [SerializeField] private Button _randomizeButton;
-        [SerializeField] private Button _quitButton;
+        [Header("Buttons")]
+        [SerializeField] private Button startBattleButton;
+        [SerializeField] private Button randomizeButton;
+        [SerializeField] private Button quitButton;
         
         [Header("Army Preview")]
-        [SerializeField] private TextMeshProUGUI _team1PreviewText;
-        [SerializeField] private TextMeshProUGUI _team2PreviewText;
-        [SerializeField] private GameObject _previewPanel;
+        [SerializeField] private TextMeshProUGUI team1PreviewText;
+        [SerializeField] private TextMeshProUGUI team2PreviewText;
+        [SerializeField] private GameObject previewPanel;
         
         [Header("Settings")]
-        [SerializeField] private Slider _unitsPerTeamSlider;
-        [SerializeField] private TextMeshProUGUI _unitsCountText;
-        [SerializeField] private Toggle _showFormationsToggle;
+        [SerializeField] private Slider unitsPerTeamSlider;
+        [SerializeField] private TextMeshProUGUI unitsCountText;
+        [SerializeField] private Toggle showFormationsToggle;
         
         [Header("Title")]
-        [SerializeField] private TextMeshProUGUI _titleText;
-        [SerializeField] private Image _titleBackground;
+        [SerializeField] private TextMeshProUGUI titleText;
+        [SerializeField] private Image titleBackground;
+
+        [Header("BattleUI")]
+        [SerializeField] private GameObject battleUI;
 
         private Core.BattleManager _battleManager;
         private bool _armiesGenerated = false;
@@ -48,40 +51,40 @@ namespace ArmyClash.UI
 
         private void SetupButtons()
         {
-            if (_startBattleButton != null)
+            if (startBattleButton != null)
             {
-                _startBattleButton.onClick.AddListener(OnStartBattle);
-                _startBattleButton.interactable = false; // Disabled until armies generated
+                startBattleButton.onClick.AddListener(OnStartBattle);
+                startBattleButton.interactable = false; // Disabled until armies generated
             }
 
-            if (_randomizeButton != null)
+            if (randomizeButton != null)
             {
-                _randomizeButton.onClick.AddListener(OnRandomizeArmies);
+                randomizeButton.onClick.AddListener(OnRandomizeArmies);
             }
 
-            if (_quitButton != null)
+            if (quitButton != null)
             {
-                _quitButton.onClick.AddListener(OnQuit);
+                quitButton.onClick.AddListener(OnQuit);
             }
         }
 
         private void SetupSettings()
         {
-            if (_unitsPerTeamSlider != null)
+            if (unitsPerTeamSlider != null)
             {
-                _unitsPerTeamSlider.minValue = 5;
-                _unitsPerTeamSlider.maxValue = 50;
-                _unitsPerTeamSlider.value = 20;
-                _unitsPerTeamSlider.onValueChanged.AddListener(OnUnitsCountChanged);
+                unitsPerTeamSlider.minValue = 5;
+                unitsPerTeamSlider.maxValue = 50;
+                unitsPerTeamSlider.value = 20;
+                unitsPerTeamSlider.onValueChanged.AddListener(OnUnitsCountChanged);
                 UpdateUnitsCountText();
             }
         }
 
         private void UpdateTitle()
         {
-            if (_titleText != null)
+            if (titleText != null)
             {
-                _titleText.text = "ARMY CLASH";
+                titleText.text = "ARMY CLASH";
             }
         }
 
@@ -93,11 +96,9 @@ namespace ArmyClash.UI
                 return;
             }
 
-            // Hide main menu
             gameObject.SetActive(false);
-            
-            // BattleManager will handle the actual battle start
-            // This is triggered by UIController
+            battleUI.SetActive(true);
+            _battleManager.StartBattle();
         }
 
         private void OnRandomizeArmies()
@@ -105,9 +106,9 @@ namespace ArmyClash.UI
             _battleManager.RandomizeArmies();
             _armiesGenerated = true;
             
-            if (_startBattleButton != null)
+            if (startBattleButton != null)
             {
-                _startBattleButton.interactable = true;
+                startBattleButton.interactable = true;
             }
 
             UpdateArmyPreviews();
@@ -115,23 +116,23 @@ namespace ArmyClash.UI
 
         private void UpdateArmyPreviews()
         {
-            if (_previewPanel != null)
+            if (previewPanel != null)
             {
-                _previewPanel.SetActive(true);
+                previewPanel.SetActive(true);
             }
 
             // Get army compositions
             var team1Units = _battleManager.GetUnitsOfTeam(Core.Team.Team1);
             var team2Units = _battleManager.GetUnitsOfTeam(Core.Team.Team2);
 
-            if (_team1PreviewText != null)
+            if (team1PreviewText != null)
             {
-                _team1PreviewText.text = GetArmyCompositionText(team1Units, "Team 1");
+                team1PreviewText.text = GetArmyCompositionText(team1Units, "Team 1");
             }
 
-            if (_team2PreviewText != null)
+            if (team2PreviewText != null)
             {
-                _team2PreviewText.text = GetArmyCompositionText(team2Units, "Team 2");
+                team2PreviewText.text = GetArmyCompositionText(team2Units, "Team 2");
             }
         }
 
@@ -175,18 +176,18 @@ namespace ArmyClash.UI
             UpdateUnitsCountText();
             _armiesGenerated = false;
             
-            if (_startBattleButton != null)
+            if (startBattleButton != null)
             {
-                _startBattleButton.interactable = false;
+                startBattleButton.interactable = false;
             }
         }
 
         private void UpdateUnitsCountText()
         {
-            if (_unitsCountText != null && _unitsPerTeamSlider != null)
+            if (unitsCountText != null && unitsPerTeamSlider != null)
             {
-                int count = (int)_unitsPerTeamSlider.value;
-                _unitsCountText.text = $"Units per team: {count}";
+                int count = (int)unitsPerTeamSlider.value;
+                unitsCountText.text = $"Units per team: {count}";
             }
         }
 
@@ -211,17 +212,17 @@ namespace ArmyClash.UI
 
         private void OnDestroy()
         {
-            if (_startBattleButton != null)
-                _startBattleButton.onClick.RemoveListener(OnStartBattle);
+            if (startBattleButton != null)
+                startBattleButton.onClick.RemoveListener(OnStartBattle);
             
-            if (_randomizeButton != null)
-                _randomizeButton.onClick.RemoveListener(OnRandomizeArmies);
+            if (randomizeButton != null)
+                randomizeButton.onClick.RemoveListener(OnRandomizeArmies);
             
-            if (_quitButton != null)
-                _quitButton.onClick.RemoveListener(OnQuit);
+            if (quitButton != null)
+                quitButton.onClick.RemoveListener(OnQuit);
             
-            if (_unitsPerTeamSlider != null)
-                _unitsPerTeamSlider.onValueChanged.RemoveListener(OnUnitsCountChanged);
+            if (unitsPerTeamSlider != null)
+                unitsPerTeamSlider.onValueChanged.RemoveListener(OnUnitsCountChanged);
         }
     }
 }

@@ -9,24 +9,20 @@ namespace ArmyClash.View
     public class BattlefieldView : MonoBehaviour
     {
         [Header("Battlefield Settings")]
-        [SerializeField] private Transform _groundPlane;
-        [SerializeField] private Vector3 _battlefieldSize = new Vector3(30, 0, 20);
+        [SerializeField] private Transform groundPlane;
+        [SerializeField] private Vector3 battlefieldSize = new Vector3(30, 0, 20);
         
         [Header("Team Spawn Zones")]
-        [SerializeField] private Transform _team1SpawnZone;
-        [SerializeField] private Transform _team2SpawnZone;
-        [SerializeField] private Material _team1ZoneMaterial;
-        [SerializeField] private Material _team2ZoneMaterial;
+        [SerializeField] private Transform team1SpawnZone;
+        [SerializeField] private Transform team2SpawnZone;
+        [SerializeField] private Material team1ZoneMaterial;
+        [SerializeField] private Material team2ZoneMaterial;
         
         [Header("Camera")]
-        [SerializeField] private Camera _battleCamera;
-        [SerializeField] private Vector3 _cameraPosition = new Vector3(0, 15, -10);
-        [SerializeField] private Vector3 _cameraRotation = new Vector3(45, 0, 0);
-        
-        [Header("Visual Effects")]
-        [SerializeField] private ParticleSystem _battleStartEffect;
-        [SerializeField] private ParticleSystem _victoryEffect;
-
+        [SerializeField] private Camera battleCamera;
+        [SerializeField] private Vector3 cameraPosition = new Vector3(0, 15, -10);
+        [SerializeField] private Vector3 cameraRotation = new Vector3(45, 0, 0);
+      
         private Core.GameConfig _config;
 
         [Inject]
@@ -44,83 +40,56 @@ namespace ArmyClash.View
 
         private void SetupBattlefield()
         {
-            if (_groundPlane != null)
+            if (groundPlane != null)
             {
-                _groundPlane.localScale = new Vector3(
-                    _battlefieldSize.x / 10f,
+                groundPlane.localScale = new Vector3(
+                    battlefieldSize.x / 10f,
                     1,
-                    _battlefieldSize.z / 10f
+                    battlefieldSize.z / 10f
                 );
             }
         }
 
         private void SetupCamera()
         {
-            if (_battleCamera == null)
-                _battleCamera = Camera.main;
+            if (battleCamera == null)
+                battleCamera = Camera.main;
 
-            if (_battleCamera != null)
+            if (battleCamera != null)
             {
-                _battleCamera.transform.position = _cameraPosition;
-                _battleCamera.transform.eulerAngles = _cameraRotation;
+                battleCamera.transform.position = cameraPosition;
+                battleCamera.transform.eulerAngles = cameraRotation;
             }
         }
 
         private void SetupSpawnZones()
         {
             // Team 1 spawn zone (left)
-            if (_team1SpawnZone != null)
+            if (team1SpawnZone != null)
             {
-                _team1SpawnZone.position = new Vector3(-_config.armySpacing, 0, 0);
-                if (_team1ZoneMaterial != null)
+                team1SpawnZone.position = new Vector3(-_config.armySpacing, 0, 0);
+                if (team1ZoneMaterial != null)
                 {
-                    var renderer = _team1SpawnZone.GetComponent<Renderer>();
+                    var renderer = team1SpawnZone.GetComponent<Renderer>();
                     if (renderer != null)
                     {
-                        renderer.material = _team1ZoneMaterial;
+                        renderer.material = team1ZoneMaterial;
                     }
                 }
             }
 
             // Team 2 spawn zone (right)
-            if (_team2SpawnZone != null)
+            if (team2SpawnZone != null)
             {
-                _team2SpawnZone.position = new Vector3(_config.armySpacing, 0, 0);
-                if (_team2ZoneMaterial != null)
+                team2SpawnZone.position = new Vector3(_config.armySpacing, 0, 0);
+                if (team2ZoneMaterial != null)
                 {
-                    var renderer = _team2SpawnZone.GetComponent<Renderer>();
+                    var renderer = team2SpawnZone.GetComponent<Renderer>();
                     if (renderer != null)
                     {
-                        renderer.material = _team2ZoneMaterial;
+                        renderer.material = team2ZoneMaterial;
                     }
                 }
-            }
-        }
-
-        /// <summary>
-        /// Play battle start visual effect
-        /// </summary>
-        public void PlayBattleStartEffect()
-        {
-            if (_battleStartEffect != null)
-            {
-                _battleStartEffect.Play();
-            }
-        }
-
-        /// <summary>
-        /// Play victory effect at winning team's position
-        /// </summary>
-        public void PlayVictoryEffect(Core.Team winningTeam)
-        {
-            if (_victoryEffect != null)
-            {
-                Vector3 position = winningTeam == Core.Team.Team1
-                    ? _team1SpawnZone.position
-                    : _team2SpawnZone.position;
-                
-                _victoryEffect.transform.position = position + Vector3.up * 2f;
-                _victoryEffect.Play();
             }
         }
 
@@ -130,8 +99,8 @@ namespace ArmyClash.View
         public Vector3 GetTeamSpawnCenter(Core.Team team)
         {
             return team == Core.Team.Team1
-                ? _team1SpawnZone.position
-                : _team2SpawnZone.position;
+                ? team1SpawnZone.position
+                : team2SpawnZone.position;
         }
 
         /// <summary>
@@ -140,7 +109,7 @@ namespace ArmyClash.View
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.yellow;
-            Gizmos.DrawWireCube(Vector3.zero, _battlefieldSize);
+            Gizmos.DrawWireCube(Vector3.zero, battlefieldSize);
 
             // Draw spawn zones
             Gizmos.color = Color.blue;

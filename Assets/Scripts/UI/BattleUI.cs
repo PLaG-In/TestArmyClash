@@ -11,27 +11,24 @@ namespace ArmyClash.UI
     public class BattleUI : MonoBehaviour
     {
         [Header("Team Counters")]
-        [SerializeField] private TextMeshProUGUI _team1CountText;
-        [SerializeField] private TextMeshProUGUI _team2CountText;
-        [SerializeField] private Image _team1CountBackground;
-        [SerializeField] private Image _team2CountBackground;
+        [SerializeField] private TextMeshProUGUI team1CountText;
+        [SerializeField] private TextMeshProUGUI team2CountText;
         
         [Header("Stats Display")]
-        [SerializeField] private TextMeshProUGUI _team1StatsText;
-        [SerializeField] private TextMeshProUGUI _team2StatsText;
+        [SerializeField] private TextMeshProUGUI team1StatsText;
+        [SerializeField] private TextMeshProUGUI team2StatsText;
         
         [Header("Battle Timer")]
-        [SerializeField] private TextMeshProUGUI _battleTimerText;
+        [SerializeField] private TextMeshProUGUI battleTimerText;
         
         [Header("Controls")]
-        [SerializeField] private Button _pauseButton;
-        [SerializeField] private Button _speedUpButton;
-        [SerializeField] private Slider _gameSpeedSlider;
-        [SerializeField] private TextMeshProUGUI _speedText;
+        [SerializeField] private Button pauseButton;
+        [SerializeField] private Button speedUpButton;
+        [SerializeField] private TextMeshProUGUI speedButtonText;
         
         [Header("Battle Info")]
-        [SerializeField] private TextMeshProUGUI _battleStatusText;
-        [SerializeField] private GameObject _pausePanel;
+        [SerializeField] private TextMeshProUGUI battleStatusText;
+        [SerializeField] private GameObject pausePanel;
 
         private Core.CombatController _combatController;
         private float _battleStartTime;
@@ -47,31 +44,19 @@ namespace ArmyClash.UI
         private void Start()
         {
             SetupButtons();
-            SetupSpeedControls();
             _battleStartTime = Time.time;
         }
 
         private void SetupButtons()
         {
-            if (_pauseButton != null)
+            if (pauseButton != null)
             {
-                _pauseButton.onClick.AddListener(TogglePause);
+                pauseButton.onClick.AddListener(TogglePause);
             }
 
-            if (_speedUpButton != null)
+            if (speedUpButton != null)
             {
-                _speedUpButton.onClick.AddListener(CycleSpeed);
-            }
-        }
-
-        private void SetupSpeedControls()
-        {
-            if (_gameSpeedSlider != null)
-            {
-                _gameSpeedSlider.minValue = 0.5f;
-                _gameSpeedSlider.maxValue = 3f;
-                _gameSpeedSlider.value = 1f;
-                _gameSpeedSlider.onValueChanged.AddListener(OnSpeedChanged);
+                speedUpButton.onClick.AddListener(CycleSpeed);
             }
         }
 
@@ -87,27 +72,14 @@ namespace ArmyClash.UI
             var team1Units = _combatController.GetUnitsOfTeam(Core.Team.Team1);
             var team2Units = _combatController.GetUnitsOfTeam(Core.Team.Team2);
 
-            if (_team1CountText != null)
+            if (team1CountText != null)
             {
-                _team1CountText.text = $"Team 1: {team1Units.Count}";
-                
-                // Color based on unit count
-                if (_team1CountBackground != null)
-                {
-                    float ratio = team1Units.Count / 20f;
-                    _team1CountBackground.color = Color.Lerp(Color.red, Color.green, ratio);
-                }
+                team1CountText.text = $"Team 1: {team1Units.Count}";
             }
 
-            if (_team2CountText != null)
+            if (team2CountText != null)
             {
-                _team2CountText.text = $"Team 2: {team2Units.Count}";
-                
-                if (_team2CountBackground != null)
-                {
-                    float ratio = team2Units.Count / 20f;
-                    _team2CountBackground.color = Color.Lerp(Color.red, Color.green, ratio);
-                }
+                team2CountText.text = $"Team 2: {team2Units.Count}";
             }
         }
 
@@ -116,14 +88,14 @@ namespace ArmyClash.UI
             var team1Units = _combatController.GetUnitsOfTeam(Core.Team.Team1);
             var team2Units = _combatController.GetUnitsOfTeam(Core.Team.Team2);
 
-            if (_team1StatsText != null)
+            if (team1StatsText != null)
             {
-                _team1StatsText.text = GetTeamStatsText(team1Units);
+                team1StatsText.text = GetTeamStatsText(team1Units);
             }
 
-            if (_team2StatsText != null)
+            if (team2StatsText != null)
             {
-                _team2StatsText.text = GetTeamStatsText(team2Units);
+                team2StatsText.text = GetTeamStatsText(team2Units);
             }
         }
 
@@ -150,12 +122,12 @@ namespace ArmyClash.UI
 
         private void UpdateBattleTimer()
         {
-            if (_battleTimerText != null)
+            if (battleTimerText != null)
             {
                 float elapsed = Time.time - _battleStartTime;
                 int minutes = (int)(elapsed / 60f);
                 int seconds = (int)(elapsed % 60);
-                _battleTimerText.text = $"Time: {minutes:D2}:{seconds:D2}";
+                battleTimerText.text = $"Time: {minutes:D2}:{seconds:D2}";
             }
         }
 
@@ -164,9 +136,9 @@ namespace ArmyClash.UI
             _isPaused = !_isPaused;
             Time.timeScale = _isPaused ? 0f : _currentSpeed;
             
-            if (_pausePanel != null)
+            if (pausePanel != null)
             {
-                _pausePanel.SetActive(_isPaused);
+                pausePanel.SetActive(_isPaused);
             }
 
             UpdateBattleStatus();
@@ -175,59 +147,41 @@ namespace ArmyClash.UI
         private void CycleSpeed()
         {
             // Cycle through: 1x -> 2x -> 3x -> 1x
-            if (_currentSpeed == 1f)
-                _currentSpeed = 2f;
-            else if (_currentSpeed == 2f)
-                _currentSpeed = 3f;
-            else
-                _currentSpeed = 1f;
+            switch (_currentSpeed)
+            {
+                case 1:
+                    speedButtonText.text = ">>";
+                    _currentSpeed = 2f;
+                    break;
+                case 2:
+                    speedButtonText.text = ">>>";
+                    _currentSpeed = 3f;
+                    break;
+                case 3:
+                    speedButtonText.text = ">";
+                    _currentSpeed = 1f;
+                    break;
+            }
 
             if (!_isPaused)
             {
                 Time.timeScale = _currentSpeed;
-            }
-
-            if (_gameSpeedSlider != null)
-            {
-                _gameSpeedSlider.value = _currentSpeed;
-            }
-
-            UpdateSpeedText();
-        }
-
-        private void OnSpeedChanged(float value)
-        {
-            _currentSpeed = value;
-            
-            if (!_isPaused)
-            {
-                Time.timeScale = _currentSpeed;
-            }
-
-            UpdateSpeedText();
-        }
-
-        private void UpdateSpeedText()
-        {
-            if (_speedText != null)
-            {
-                _speedText.text = $"Speed: {_currentSpeed:F1}x";
             }
         }
 
         private void UpdateBattleStatus()
         {
-            if (_battleStatusText != null)
+            if (battleStatusText != null)
             {
                 if (_isPaused)
                 {
-                    _battleStatusText.text = "PAUSED";
-                    _battleStatusText.color = Color.yellow;
+                    battleStatusText.text = "PAUSED";
+                    battleStatusText.color = Color.yellow;
                 }
                 else
                 {
-                    _battleStatusText.text = "BATTLE IN PROGRESS";
-                    _battleStatusText.color = Color.white;
+                    battleStatusText.text = "BATTLE IN PROGRESS";
+                    battleStatusText.color = Color.white;
                 }
             }
         }
@@ -249,15 +203,12 @@ namespace ArmyClash.UI
 
         private void OnDestroy()
         {
-            if (_pauseButton != null)
-                _pauseButton.onClick.RemoveListener(TogglePause);
+            if (pauseButton != null)
+                pauseButton.onClick.RemoveListener(TogglePause);
             
-            if (_speedUpButton != null)
-                _speedUpButton.onClick.RemoveListener(CycleSpeed);
-            
-            if (_gameSpeedSlider != null)
-                _gameSpeedSlider.onValueChanged.RemoveListener(OnSpeedChanged);
-
+            if (speedUpButton != null)
+                speedUpButton.onClick.RemoveListener(CycleSpeed);
+          
             // Reset time scale on destroy
             Time.timeScale = 1f;
         }

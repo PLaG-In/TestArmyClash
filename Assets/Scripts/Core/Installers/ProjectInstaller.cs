@@ -24,24 +24,9 @@ namespace ArmyClash.Core
                     .AsSingle()
                     .IfNotBound(); // Only bind if not already bound by scene
             }
-
-            // Bind global services that persist across scenes
-            BindGlobalServices();
             
             // Bind utilities
             BindUtilities();
-        }
-
-        private void BindGlobalServices()
-        {
-            // Audio service (if you implement it later)
-            // Container.BindInterfacesAndSelfTo<AudioService>().AsSingle();
-
-            // Analytics service (if needed)
-            // Container.BindInterfacesAndSelfTo<AnalyticsService>().AsSingle();
-
-            // Save/Load service
-            // Container.BindInterfacesAndSelfTo<SaveLoadService>().AsSingle();
         }
 
         private void BindUtilities()

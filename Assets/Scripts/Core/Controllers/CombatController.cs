@@ -2,17 +2,20 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Zenject;
+using ArmyClash.Utilities;
 
 namespace ArmyClash.Core
 {
     /// <summary>
     /// Handles combat logic, targeting, and battle flow
+    /// Uses Constants from Utilities
     /// </summary>
     public class CombatController : ITickable
     {
         private readonly GameConfig _config;
         private readonly List<Unit> _allUnits = new List<Unit>();
         private readonly ITargetingStrategy _targetingStrategy;
+        private int _frameCount = 0;
 
         public CombatController(GameConfig config, ITargetingStrategy targetingStrategy)
         {
@@ -34,22 +37,26 @@ namespace ArmyClash.Core
 
         public void Tick()
         {
+            _frameCount++;
             float currentTime = Time.time;
 
             foreach (var unit in _allUnits.Where(u => u.IsAlive).ToList())
             {
-                // Find or update target
-                if (unit.Target == null || !unit.Target.IsAlive)
+                // Update target selection periodically (using Constants.TARGET_UPDATE_INTERVAL)
+                if (_frameCount % Constants.TARGET_UPDATE_INTERVAL == 0)
                 {
-                    unit.Target = _targetingStrategy.FindTarget(unit, GetEnemies(unit.Team));
+                    if (unit.Target == null || !unit.Target.IsAlive)
+                    {
+                        unit.Target = _targetingStrategy.FindTarget(unit, GetEnemies(unit.Team));
+                    }
                 }
 
-                // Attack if in range
+                // Attack if in range (using Constants.MELEE_RANGE)
                 if (unit.Target != null)
                 {
                     float distance = Vector3.Distance(unit.Position, unit.Target.Position);
-
-                    if (distance <= 1f) // Melee range
+                    
+                    if (distance <= Constants.MELEE_RANGE)
                     {
                         if (unit.CanAttack(currentTime))
                         {

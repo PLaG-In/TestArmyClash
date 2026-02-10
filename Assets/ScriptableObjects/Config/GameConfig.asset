@@ -12,6 +12,46 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08d6dbae5a395474db9fbf946ede036e, type: 3}
   m_Name: GameConfig
   m_EditorClassIdentifier: Core::ArmyClash.Core.GameConfig
+  baseStats:
+    HP: 100
+    ATK: 10
+    Speed: 10
+    AtkSpeed: 1
+  cubeModifier:
+    HP: 100
+    ATK: 10
+    Speed: 0
+    AtkSpeed: 0
+  sphereModifier:
+    HP: 50
+    ATK: 20
+    Speed: 0
+    AtkSpeed: 0
+  bigModifier:
+    HP: 50
+    ATK: 0
+    Speed: 0
+    AtkSpeed: 0
+  smallModifier:
+    HP: -50
+    ATK: 0
+    Speed: 0
+    AtkSpeed: 0
+  blueModifier:
+    HP: 0
+    ATK: -15
+    Speed: 10
+    AtkSpeed: 4
+  greenModifier:
+    HP: -50
+    ATK: 20
+    Speed: -5
+    AtkSpeed: 0
+  redModifier:
+    HP: 200
+    ATK: 40
+    Speed: -9
+    AtkSpeed: 0
   unitsPerArmy: 20
-  armySpacing: 2
-  unitSpacing: 1.5
+  armySpacing: 3
+  unitSpacing: 2
