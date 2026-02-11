@@ -12,7 +12,7 @@ namespace ArmyClash.UI
     {
         [SerializeField] private GameObject mainMenuPanel;
         [SerializeField] private GameObject battleUIPanel;
-        [SerializeField] private GameObject endScreenPanel;
+        [SerializeField] private EndBattleUI endScreenPanel;
 
         private Core.BattleManager _battleManager;
         private Core.CombatController _combatController;
@@ -51,27 +51,28 @@ namespace ArmyClash.UI
         private void OnBattleEnded(Core.Team winner)
         {
             ShowEndScreen(winner);
+            endScreenPanel.SetWinnerText(winner);
         }
 
         private void ShowMainMenu()
         {
             mainMenuPanel?.SetActive(true);
             battleUIPanel?.SetActive(false);
-            endScreenPanel?.SetActive(false);
+            endScreenPanel.gameObject.SetActive(false);
         }
 
         public void ShowBattleUI()
         {
             mainMenuPanel?.SetActive(false);
             battleUIPanel?.SetActive(true);
-            endScreenPanel?.SetActive(false);
+            endScreenPanel.gameObject.SetActive(false);
         }
 
         private void ShowEndScreen(Core.Team winner)
         {
             mainMenuPanel?.SetActive(false);
             battleUIPanel?.SetActive(false);
-            endScreenPanel?.SetActive(true);
+            endScreenPanel.gameObject.SetActive(true);
 
         }
 

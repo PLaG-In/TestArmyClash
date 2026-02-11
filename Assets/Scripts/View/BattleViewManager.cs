@@ -71,7 +71,7 @@ namespace ArmyClash.View
                 _cubePool = new ObjectPool<UnitView>(
                     cubeView, 
                     cubeParent, 
-                    initialSize: 20, 
+                    initialSize: 0, 
                     maxSize: Constants.MAX_UNITS_PER_TEAM
                 );
             }
@@ -92,7 +92,7 @@ namespace ArmyClash.View
                 _spherePool = new ObjectPool<UnitView>(
                     sphereView, 
                     sphereParent, 
-                    initialSize: 20, 
+                    initialSize: 0, 
                     maxSize: Constants.MAX_UNITS_PER_TEAM
                 );
             }
@@ -155,10 +155,6 @@ namespace ArmyClash.View
                 {
                     GameObject go = Instantiate(prefab, position, Quaternion.identity);
                     view = go.GetComponent<UnitView>();
-                    if (view == null)
-                    {
-                        view = go.AddComponent<UnitView>();
-                    }
                 }
             }
 

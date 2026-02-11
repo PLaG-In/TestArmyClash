@@ -7,18 +7,17 @@ namespace ArmyClash.Core
 {
     /// <summary>
     /// Service that manages the entire battle lifecycle
-    /// Uses BattleState - NO circular dependencies
+    /// Movement is now autonomous in UnitView
     /// </summary>
     public class BattleManager : IInitializable, IDisposable
     {
         public event Action<Team> OnBattleEnded;
         public event Action<Unit, Vector3, UnitShape> OnUnitSpawned;
         public event Action OnBattleCleared;
-        
+
         private readonly GameConfig _config;
         private readonly IUnitFactory _unitFactory;
         private readonly CombatController _combatController;
-        private readonly MovementController _movementController;
         private readonly BattleState _battleState;
 
         private readonly List<Unit> _team1Units = new List<Unit>();
@@ -28,13 +27,11 @@ namespace ArmyClash.Core
             GameConfig config,
             IUnitFactory unitFactory,
             CombatController combatController,
-            MovementController movementController,
             BattleState battleState)
         {
             _config = config;
             _unitFactory = unitFactory;
             _combatController = combatController;
-            _movementController = movementController;
             _battleState = battleState;
         }
 
@@ -89,14 +86,14 @@ namespace ArmyClash.Core
         {
             int rows = 4;
             int cols = 5;
-            
+
             int row = index / cols;
             int col = index % cols;
 
-            float xOffset = team == Team.Team1 ? -_config.armySpacing - col : _config.armySpacing + col;
-            float x = xOffset;
+            float baseX = team == Team.Team1 ? -_config.armySpacing : _config.armySpacing;
+            float x = baseX + (col - cols / 2f) * _config.unitSpacing;
             float z = (row - rows / 2f) * _config.unitSpacing;
-            float y = 1f;
+            float y = 0.5f;
 
             return new Vector3(x, y, z);
         }
@@ -104,12 +101,11 @@ namespace ArmyClash.Core
         private void SpawnUnit(Unit unit, Vector3 position)
         {
             unit.Position = position;
-            
+
             _combatController.RegisterUnit(unit);
-            _movementController.RegisterUnit(unit);
-            
+
             unit.OnDeath += OnUnitDied;
-            
+
             OnUnitSpawned?.Invoke(unit, position, unit.Shape);
         }
 
@@ -117,7 +113,6 @@ namespace ArmyClash.Core
         {
             _team1Units.Remove(unit);
             _team2Units.Remove(unit);
-            _movementController.UnregisterUnit(unit);
             CheckBattleEnd();
         }
 
@@ -156,9 +151,8 @@ namespace ArmyClash.Core
             _team1Units.Clear();
             _team2Units.Clear();
             _combatController.Clear();
-            _movementController.Clear();
             _battleState.Reset();
-            
+
             OnBattleCleared?.Invoke();
         }
 

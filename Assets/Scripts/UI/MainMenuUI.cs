@@ -34,7 +34,6 @@ namespace ArmyClash.UI
 
         private void Start()
         {
-
             randomizeButton.onClick.AddListener(OnRandomizeClicked);
             startBattleButton.onClick.AddListener(OnStartBattleClicked);
             _battleManager.OnUnitSpawned += OnUnitSpawned;

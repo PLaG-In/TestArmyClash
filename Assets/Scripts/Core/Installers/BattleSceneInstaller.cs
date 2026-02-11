@@ -4,8 +4,8 @@ using Zenject;
 namespace ArmyClash.Core
 {
     /// <summary>
-    /// Main Zenject installer - binds all dependencies for the battle scene
-    /// Includes BattleState to avoid circular dependencies
+    /// Main Zenject installer for battle scene
+    /// Movement is now autonomous in UnitView (no MovementController)
     /// </summary>
     public class BattleSceneInstaller : MonoInstaller
     {
@@ -15,7 +15,6 @@ namespace ArmyClash.Core
 
         public override void InstallBindings()
         {
-            // Validate configs
             if (gameConfig == null)
             {
                 Debug.LogError("[BattleSceneInstaller] GameConfig is not assigned!");
@@ -32,7 +31,7 @@ namespace ArmyClash.Core
             Container.BindInstance(gameConfig).AsSingle();
             Container.BindInstance(prefabConfig).AsSingle();
 
-            // IMPORTANT: Bind BattleState FIRST (no dependencies)
+            // Bind BattleState FIRST (no dependencies)
             Container.BindInterfacesAndSelfTo<BattleState>().AsSingle();
 
             // Bind factories
@@ -41,14 +40,15 @@ namespace ArmyClash.Core
             // Bind targeting strategy
             Container.Bind<ITargetingStrategy>().To<NearestTargetingStrategy>().AsSingle();
 
-            // Bind controllers (they depend on BattleState, not BattleManager)
+            // Bind combat controller (only targeting, no attacks/movement)
             Container.BindInterfacesAndSelfTo<CombatController>().AsSingle();
-            Container.BindInterfacesAndSelfTo<MovementController>().AsSingle();
 
-            // Bind main battle manager (depends on BattleState)
+            // NO MovementController - movement is autonomous in UnitView!
+
+            // Bind battle manager
             Container.BindInterfacesAndSelfTo<BattleManager>().AsSingle();
 
-            Debug.Log("[BattleSceneInstaller] All dependencies bound (no circular refs)");
+            Debug.Log("[BattleSceneInstaller] All dependencies bound successfully");
         }
     }
 }
