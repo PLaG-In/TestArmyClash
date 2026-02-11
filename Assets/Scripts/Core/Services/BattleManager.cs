@@ -7,7 +7,7 @@ namespace ArmyClash.Core
 {
     /// <summary>
     /// Service that manages the entire battle lifecycle
-    /// Uses events to communicate with View layer (no direct dependencies)
+    /// Uses BattleState - NO circular dependencies
     /// </summary>
     public class BattleManager : IInitializable, IDisposable
     {
@@ -19,48 +19,55 @@ namespace ArmyClash.Core
         private readonly IUnitFactory _unitFactory;
         private readonly CombatController _combatController;
         private readonly MovementController _movementController;
+        private readonly BattleState _battleState;
 
         private readonly List<Unit> _team1Units = new List<Unit>();
         private readonly List<Unit> _team2Units = new List<Unit>();
-
-        private bool _battleActive;
 
         public BattleManager(
             GameConfig config,
             IUnitFactory unitFactory,
             CombatController combatController,
-            MovementController movementController)
+            MovementController movementController,
+            BattleState battleState)
         {
             _config = config;
             _unitFactory = unitFactory;
             _combatController = combatController;
             _movementController = movementController;
+            _battleState = battleState;
         }
 
         public void Initialize()
         {
-            // Initialization if needed
+        }
+
+        public void PrepareArmies()
+        {
+            ClearBattle();
+            SpawnArmies();
+            _battleState.Reset();
+            Debug.Log("[BattleManager] Armies prepared");
         }
 
         public void StartBattle()
         {
-            ClearBattle();
-            SpawnArmies();
-            _battleActive = true;
+            if (_team1Units.Count == 0 || _team2Units.Count == 0)
+            {
+                PrepareArmies();
+            }
+
+            _battleState.StartBattle();
         }
 
         public void RandomizeArmies()
         {
-            if (_battleActive)
-            {
-                ClearBattle();
-            }
-            SpawnArmies();
+            ClearBattle();
+            PrepareArmies();
         }
 
         private void SpawnArmies()
         {
-            // Spawn Team 1 (left side)
             for (int i = 0; i < _config.unitsPerArmy; i++)
             {
                 Unit unit = _unitFactory.CreateRandomUnit(Team.Team1);
@@ -69,7 +76,6 @@ namespace ArmyClash.Core
                 _team1Units.Add(unit);
             }
 
-            // Spawn Team 2 (right side)
             for (int i = 0; i < _config.unitsPerArmy; i++)
             {
                 Unit unit = _unitFactory.CreateRandomUnit(Team.Team2);
@@ -81,16 +87,16 @@ namespace ArmyClash.Core
 
         private Vector3 CalculateSpawnPosition(Team team, int index)
         {
-            int rows = 4; // 5x4 formation for 20 units
+            int rows = 4;
             int cols = 5;
             
             int row = index / cols;
             int col = index % cols;
 
-            float xOffset = team == Team.Team1 ? -_config.armySpacing : _config.armySpacing;
+            float xOffset = team == Team.Team1 ? -_config.armySpacing - col : _config.armySpacing + col;
             float x = xOffset;
             float z = (row - rows / 2f) * _config.unitSpacing;
-            float y = (col - cols / 2f) * _config.unitSpacing;
+            float y = 1f;
 
             return new Vector3(x, y, z);
         }
@@ -104,7 +110,6 @@ namespace ArmyClash.Core
             
             unit.OnDeath += OnUnitDied;
             
-            // Notify View layer to create visual representation
             OnUnitSpawned?.Invoke(unit, position, unit.Shape);
         }
 
@@ -113,13 +118,12 @@ namespace ArmyClash.Core
             _team1Units.Remove(unit);
             _team2Units.Remove(unit);
             _movementController.UnregisterUnit(unit);
-
             CheckBattleEnd();
         }
 
         private void CheckBattleEnd()
         {
-            if (!_battleActive) return;
+            if (!_battleState.IsBattleActive) return;
 
             if (_team1Units.Count == 0)
             {
@@ -133,9 +137,9 @@ namespace ArmyClash.Core
 
         private void EndBattle(Team winner)
         {
-            _battleActive = false;
+            _battleState.StopBattle();
             OnBattleEnded?.Invoke(winner);
-            Debug.Log($"Battle ended! Winner: {winner}");
+            Debug.Log($"[BattleManager] Battle ended! Winner: {winner}");
         }
 
         public void ClearBattle()
@@ -153,9 +157,8 @@ namespace ArmyClash.Core
             _team2Units.Clear();
             _combatController.Clear();
             _movementController.Clear();
-            _battleActive = false;
+            _battleState.Reset();
             
-            // Notify View layer to destroy all visuals
             OnBattleCleared?.Invoke();
         }
 

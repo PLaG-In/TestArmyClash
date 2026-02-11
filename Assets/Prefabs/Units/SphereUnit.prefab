@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8861258783413636355}
   - component: {fileID: 1357134598658777398}
   - component: {fileID: 7850283652803363049}
+  - component: {fileID: 6693186849771561144}
   m_Layer: 0
   m_Name: SphereUnit
   m_TagString: Untagged
@@ -126,8 +127,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 544bac3d09be2cd4da18b23b3e2c2f59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: View::ArmyClash.View.UnitView
-  _renderer: {fileID: 8861258783413636355}
-  _healthBarTransform: {fileID: 5345989972337652474}
+  renderer: {fileID: 8861258783413636355}
+  healthBarTransform: {fileID: 5345989972337652474}
+--- !u!54 &6693186849771561144
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 904775376042374985}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &4805726167828416540
 PrefabInstance:
   m_ObjectHideFlags: 0

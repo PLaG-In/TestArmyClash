@@ -16,7 +16,7 @@ namespace ArmyClash.Utilities
         /// <summary>
         /// Minimum distance between units to avoid overlap
         /// </summary>
-        public const float UNIT_PERSONAL_SPACE = 0.5f;
+        public const float UNIT_PERSONAL_SPACE = 2f;
 
         /// <summary>
         /// Maximum targeting distance (optimization)

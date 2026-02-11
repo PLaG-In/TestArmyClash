@@ -53,5 +53,5 @@ MonoBehaviour:
     Speed: -9
     AtkSpeed: 0
   unitsPerArmy: 20
-  armySpacing: 3
+  armySpacing: 4
   unitSpacing: 2

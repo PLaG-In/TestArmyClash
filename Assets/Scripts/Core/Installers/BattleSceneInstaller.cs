@@ -5,17 +5,13 @@ namespace ArmyClash.Core
 {
     /// <summary>
     /// Main Zenject installer - binds all dependencies for the battle scene
-    /// Install this on a SceneContext in your battle scene
+    /// Includes BattleState to avoid circular dependencies
     /// </summary>
     public class BattleSceneInstaller : MonoInstaller
     {
         [Header("Configurations")]
         [SerializeField] private GameConfig gameConfig;
         [SerializeField] private UnitPrefabConfig prefabConfig;
-
-        [Header("Optional: Custom Strategy")]
-        [SerializeField] private bool useCustomStrategy = false;
-        [SerializeField] private TargetingStrategyType _strategyType = TargetingStrategyType.Nearest;
 
         public override void InstallBindings()
         {
@@ -36,51 +32,23 @@ namespace ArmyClash.Core
             Container.BindInstance(gameConfig).AsSingle();
             Container.BindInstance(prefabConfig).AsSingle();
 
+            // IMPORTANT: Bind BattleState FIRST (no dependencies)
+            Container.BindInterfacesAndSelfTo<BattleState>().AsSingle();
+
             // Bind factories
             Container.Bind<IUnitFactory>().To<UnitFactory>().AsSingle();
 
             // Bind targeting strategy
-            BindTargetingStrategy();
+            Container.Bind<ITargetingStrategy>().To<NearestTargetingStrategy>().AsSingle();
 
-            // Bind controllers (ITickable will be called automatically)
+            // Bind controllers (they depend on BattleState, not BattleManager)
             Container.BindInterfacesAndSelfTo<CombatController>().AsSingle();
             Container.BindInterfacesAndSelfTo<MovementController>().AsSingle();
 
-            // Bind main battle manager
+            // Bind main battle manager (depends on BattleState)
             Container.BindInterfacesAndSelfTo<BattleManager>().AsSingle();
 
-            Debug.Log("[BattleSceneInstaller] All dependencies bound successfully");
-        }
-
-        private void BindTargetingStrategy()
-        {
-            if (useCustomStrategy)
-            {
-                switch (_strategyType)
-                {
-                    case TargetingStrategyType.Nearest:
-                        Container.Bind<ITargetingStrategy>().To<NearestTargetingStrategy>().AsSingle();
-                        break;
-                    case TargetingStrategyType.Weakest:
-                        Container.Bind<ITargetingStrategy>().To<WeakestTargetingStrategy>().AsSingle();
-                        break;
-                    case TargetingStrategyType.Strongest:
-                        Container.Bind<ITargetingStrategy>().To<StrongestTargetingStrategy>().AsSingle();
-                        break;
-                }
-            }
-            else
-            {
-                // Default strategy
-                Container.Bind<ITargetingStrategy>().To<NearestTargetingStrategy>().AsSingle();
-            }
-        }
-
-        private enum TargetingStrategyType
-        {
-            Nearest,
-            Weakest,
-            Strongest
+            Debug.Log("[BattleSceneInstaller] All dependencies bound (no circular refs)");
         }
     }
 }

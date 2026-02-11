@@ -60,7 +60,7 @@ namespace ArmyClash.UI
             endScreenPanel?.SetActive(false);
         }
 
-        private void ShowBattleUI()
+        public void ShowBattleUI()
         {
             mainMenuPanel?.SetActive(false);
             battleUIPanel?.SetActive(true);
