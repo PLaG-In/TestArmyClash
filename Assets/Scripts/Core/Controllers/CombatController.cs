@@ -47,13 +47,12 @@ namespace ArmyClash.Core
 
             _frameCount++;
 
-            // Only update targeting
             foreach (var unit in _allUnits.Where(u => u.IsAlive).ToList())
             {
                 // Update target selection periodically
                 if (_frameCount % Constants.TARGET_UPDATE_INTERVAL == 0)
                 {
-                    if (unit.Target == null || !unit.Target.IsAlive)
+                    if (unit.Target is not { IsAlive: true })
                     {
                         unit.Target = _targetingStrategy.FindTarget(unit, GetEnemies(unit.Team));
                     }

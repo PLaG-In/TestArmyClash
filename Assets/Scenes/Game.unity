@@ -708,7 +708,7 @@ GameObject:
   m_Component:
   - component: {fileID: 257523192}
   m_Layer: 0
-  m_Name: -----------
+  m_Name: ----------------------
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -880,16 +880,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Core::ArmyClash.Core.CameraController
   _camera: {fileID: 330585545}
-  _panSpeed: 20
-  _zoomSpeed: 10
-  _rotationSpeed: 100
-  _panLimitX: {x: -50, y: 50}
-  _panLimitZ: {x: -50, y: 50}
-  _zoomLimit: {x: 5, y: 50}
-  _enableEdgePanning: 1
-  _edgePanningThreshold: 20
-  _enableKeyboardControls: 1
-  _enableMouseControls: 1
+  _panSpeed: 10
+  _mouseDragSpeed: 0.5
+  _touchDragSpeed: 0.05
+  _edgePanSpeed: 15
+  _edgePanThreshold: 20
+  _smoothTime: 0.2
+  _scrollZoomSpeed: 5
+  _pinchZoomSpeed: 0.05
+  _minZoom: 5
+  _maxZoom: 30
+  _enableRotation: 1
+  _keyRotateSpeed: 100
+  _touchRotateSpeed: 0.3
+  _limitX: {x: -25, y: 25}
+  _limitZ: {x: -25, y: 25}
+  _heightLimit: {x: 5, y: 30}
+  _enableKeyboard: 1
+  _enableMouseDrag: 1
+  _enableEdgePan: 1
+  _enableScrollZoom: 1
 --- !u!1 &365673428
 GameObject:
   m_ObjectHideFlags: 0
@@ -1997,6 +2007,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 584225379}
   m_CullTransparentMesh: 1
+--- !u!1 &665317515
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 665317516}
+  - component: {fileID: 665317517}
+  m_Layer: 0
+  m_Name: BattleViewManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &665317516
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 665317515}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 710406244}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &665317517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 665317515}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42b37ce25f579e94cbc9eee0ae8eaf13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: View::ArmyClash.View.BattleViewManager
 --- !u!1 &710406243
 GameObject:
   m_ObjectHideFlags: 0
@@ -2022,12 +2076,15 @@ Transform:
   m_GameObject: {fileID: 710406243}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 315.87732, y: 0.00005, z: 1387.0872}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 665317516}
   - {fileID: 1434849427}
+  - {fileID: 1104342433}
   - {fileID: 887245915}
+  - {fileID: 881550734}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &731474587
@@ -2288,6 +2345,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 881011163}
   m_CullTransparentMesh: 1
+--- !u!1 &881550733
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 881550734}
+  - component: {fileID: 881550735}
+  m_Layer: 0
+  m_Name: UIController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &881550734
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 881550733}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 710406244}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &881550735
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 881550733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d0c28b987dcd2f41ae9d33536080aea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UI::ArmyClash.UI.UIController
+  mainMenuPanel: {fileID: 502503574}
+  battleUIPanel: {fileID: 2097309899}
+  endScreenPanel: {fileID: 1816011275}
 --- !u!1 &887245914
 GameObject:
   m_ObjectHideFlags: 0
@@ -2315,7 +2419,7 @@ Transform:
   m_GameObject: {fileID: 887245914}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -315.87732, y: -0.00005, z: -1387.0872}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2582,6 +2686,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1016069320}
   m_CullTransparentMesh: 1
+--- !u!1 &1104342432
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1104342433}
+  - component: {fileID: 1104342434}
+  m_Layer: 0
+  m_Name: BonusSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1104342433
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1104342432}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 710406244}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1104342434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1104342432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60bbc2dde668c4c4899accaa02482de1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: View::ArmyClash.View.BonusSpawner
+  _bonusConfig: {fileID: 11400000, guid: 8ebc6f9b5775e074fa3ba0e99b8179ae, type: 2}
+  _bonusPrefab: {fileID: 7960095328313351680, guid: 1d7b8270730b7cd44b04dc911000e6a0, type: 3}
 --- !u!1 &1174078335
 GameObject:
   m_ObjectHideFlags: 0
@@ -3282,7 +3432,7 @@ Transform:
   m_GameObject: {fileID: 1434849425}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -315.87732, y: -0.00005, z: -1387.0872}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3313,7 +3463,6 @@ GameObject:
   - component: {fileID: 1487067603}
   - component: {fileID: 1487067602}
   - component: {fileID: 1487067601}
-  - component: {fileID: 1487067604}
   m_Layer: 9
   m_Name: Plane
   m_TagString: Untagged
@@ -3395,27 +3544,6 @@ Transform:
   - {fileID: 1174078336}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1487067604
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1487067599}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab3c04d7cbf04e145970fab28d449030, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: View::ArmyClash.View.BattlefieldView
-  groundPlane: {fileID: 1487067603}
-  battlefieldSize: {x: 500, y: 0, z: 500}
-  team1SpawnZone: {fileID: 76176395}
-  team2SpawnZone: {fileID: 1174078336}
-  team1ZoneMaterial: {fileID: 2100000, guid: 73227d543b01c50449e5e87817ac633b, type: 2}
-  team2ZoneMaterial: {fileID: 2100000, guid: a6a6a5a759ec21449a421d8a53337cae, type: 2}
-  battleCamera: {fileID: 330585545}
-  cameraPosition: {x: 0, y: 15, z: -10}
-  cameraRotation: {x: 45, y: 0, z: 0}
 --- !u!1 &1527055677
 GameObject:
   m_ObjectHideFlags: 0
@@ -3795,8 +3923,6 @@ GameObject:
   - component: {fileID: 1870024674}
   - component: {fileID: 1870024673}
   - component: {fileID: 1870024672}
-  - component: {fileID: 1870024676}
-  - component: {fileID: 1870024677}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -3853,7 +3979,7 @@ Canvas:
   m_GameObject: {fileID: 1870024671}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 0
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -3889,33 +4015,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1870024676
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1870024671}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d0c28b987dcd2f41ae9d33536080aea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UI::ArmyClash.UI.UIController
-  mainMenuPanel: {fileID: 502503574}
-  battleUIPanel: {fileID: 2097309899}
-  endScreenPanel: {fileID: 1816011275}
---- !u!114 &1870024677
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1870024671}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 42b37ce25f579e94cbc9eee0ae8eaf13, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: View::ArmyClash.View.BattleViewManager
 --- !u!1 &1890596325
 GameObject:
   m_ObjectHideFlags: 0
@@ -4490,7 +4589,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2058845883}
   m_Layer: 0
-  m_Name: '----------- '
+  m_Name: ----------------------
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

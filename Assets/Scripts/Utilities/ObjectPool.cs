@@ -97,6 +97,15 @@ namespace ArmyClash.Utilities
             T obj = Get();
             obj.transform.position = position;
             obj.transform.rotation = rotation;
+            
+            Rigidbody rb = obj.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.position        = position;
+                rb.rotation        = rotation;
+                rb.linearVelocity        = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
             return obj;
         }
 
@@ -166,7 +175,6 @@ namespace ArmyClash.Utilities
             T obj = Object.Instantiate(_prefab, _parent);
             obj.gameObject.SetActive(false);
             _allObjects.Add(obj);
-            _availableObjects.Enqueue(obj);
             return obj;
         }
 
@@ -211,9 +219,9 @@ namespace ArmyClash.Utilities
         /// </summary>
         public ObjectPool<T> GetOrCreatePool<T>(string poolName, T prefab, int initialSize = 10, int maxSize = 100) where T : Component
         {
-            if (_pools.ContainsKey(poolName))
+            if (_pools.TryGetValue(poolName, out var pool1))
             {
-                return _pools[poolName] as ObjectPool<T>;
+                return pool1 as ObjectPool<T>;
             }
 
             Transform parent = new GameObject($"Pool_{poolName}").transform;

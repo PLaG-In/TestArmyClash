@@ -20,8 +20,8 @@ namespace ArmyClash.Core
         private readonly CombatController _combatController;
         private readonly BattleState _battleState;
 
-        private readonly List<Unit> _team1Units = new List<Unit>();
-        private readonly List<Unit> _team2Units = new List<Unit>();
+        private readonly List<Unit> _team1Units = new();
+        private readonly List<Unit> _team2Units = new();
 
         public BattleManager(
             GameConfig config,

@@ -46,7 +46,6 @@ namespace ArmyClash.View
 
         private void Start()
         {
-            // Subscribe to BattleManager events
             _battleManager.OnUnitSpawned += CreateUnitView;
             _battleManager.OnBattleCleared += ClearAllViews;
             
@@ -98,39 +97,6 @@ namespace ArmyClash.View
             }
 
             Debug.Log($"[BattleViewManager] Initialized object pools");
-        }
-
-        private void Update()
-        {
-            foreach (var kvp in _unitViews)
-            {
-                Unit unit = kvp.Key;
-                UnitView view = kvp.Value;
-
-                if (unit != null && view != null && unit.IsAlive)
-                {
-                    // Model position is updated by UnitView itself now
-                    
-                    // Rotate to face target
-                    if (unit.Target != null && unit.Target.IsAlive)
-                    {
-                        UnitView targetView = GetViewForUnit(unit.Target);
-                        if (targetView != null)
-                        {
-                            Vector3 direction = (targetView.transform.position - view.transform.position).normalized;
-                            if (direction != Vector3.zero)
-                            {
-                                Quaternion targetRotation = Quaternion.LookRotation(direction);
-                                view.transform.rotation = Quaternion.Slerp(
-                                    view.transform.rotation, 
-                                    targetRotation, 
-                                    Time.deltaTime * 5f
-                                );
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         private void CreateUnitView(Unit unit, Vector3 position, UnitShape shape)

@@ -3,10 +3,6 @@ using Zenject;
 
 namespace ArmyClash.Core
 {
-    /// <summary>
-    /// Main Zenject installer for battle scene
-    /// Movement is now autonomous in UnitView (no MovementController)
-    /// </summary>
     public class BattleSceneInstaller : MonoInstaller
     {
         [Header("Configurations")]
