@@ -72,27 +72,6 @@ HP: 100  ATK: 10  Speed: 10  AtkSpeed: 1
 - **Randomize** — перегенерировать армии
 - **Start** — начать битву
 - **Pause** — пауза / продолжить
-- **Clear** — сбросить поле
-
-### Камера — Desktop
-
-| Действие | Управление |
-|---|---|
-| Перемещение | WASD / Стрелки |
-| Перемещение мышью | Средняя кнопка + drag |
-| Edge panning | Курсор к краю экрана |
-| Приближение | Колесико мыши |
-| Вращение | Q / E |
-| Сброс | Space / Home |
-
-### Камера — Mobile
-
-| Действие | Управление |
-|---|---|
-| Перемещение | 1 палец — drag |
-| Приближение | 2 пальца — pinch |
-| Перемещение | 2 пальца — drag |
-| Вращение | 2 пальца — twist |
 
 ---
 
@@ -120,23 +99,8 @@ View
 UI
   MainMenuUI / BattleUI / EndScreenUI
 
-Services
-  AudioManager / VisualEffectsManager / SettingsManager / StatisticsTracker
-
 Utilities
   ObjectPool<T> / Constants / Extensions
-```
-
-### Dependency Graph
-
-Все контроллеры и View зависят от `BattleState`, а не друг от друга — циклических зависимостей нет.
-
-```
-BattleState  (нет зависимостей)
-     ↑
-     ├── BattleManager
-     ├── CombatController
-     └── UnitView
 ```
 
 ### Паттерны
@@ -164,7 +128,7 @@ BattleState  (нет зависимостей)
 
 ## Установка
 
-**Требования:** Unity 2022.3 LTS+, Zenject (Extenject)
+**Требования:** Unity 6000.3.7f1, Zenject (Extenject)
 
 ```
 Window → Package Manager → Add package from git URL:
@@ -204,10 +168,11 @@ Assets → Create → ArmyClash → Bonus Config
 
 ```
 SceneContext       компонент SceneContext (Zenject) → BattleSceneInstaller
-Ground             Cube 50×1×50, Layer: Ground, BoxCollider
+Ground             Plane 50×1×50, Layer: Ground, BoxCollider
 BattleViewManager  компонент BattleViewManager
 BonusSpawner       компонент BonusSpawner, поле BonusConfig → ваш BonusConfig
-Main Camera        компонент CameraController, Rotation: (45, 0, 0), Position: (0, 15, -10)
+Main Camera        компонент CameraController
+Canvas             для UI
 ```
 
 ---
@@ -228,35 +193,17 @@ Scripts/
 │   ├── BonusConfig.cs
 │   ├── Enums.cs
 │   ├── TargetingStrategies.cs
-│   └── Formations/
-│       ├── IFormation.cs
-│       ├── DefensiveSquareFormation.cs
-│       ├── OffensiveLineFormation.cs
-│       ├── WedgeFormation.cs
-│       └── FormationSelector.cs
+│   └── CameraController.cs
 ├── View/
 │   ├── UnitView.cs
 │   ├── BattleViewManager.cs
 │   ├── BonusSpawner.cs
 │   ├── BonusPickup.cs
-│   └── CameraController.cs
 ├── UI/
 │   ├── UIController.cs
 │   ├── MainMenuUI.cs
 │   ├── BattleUI.cs
 │   ├── EndScreenUI.cs
-│   ├── LoadingScreen.cs
-│   ├── HealthBarView.cs
-│   └── DamageNumbersView.cs
-├── Services/
-│   ├── AudioManager.cs
-│   ├── VisualEffectsManager.cs
-│   ├── GameStateManager.cs
-│   ├── InputManager.cs
-│   ├── SettingsManager.cs
-│   ├── SceneLoader.cs
-│   ├── StatisticsTracker.cs
-│   └── UnitSelectionManager.cs
 ├── Utilities/
 │   ├── Constants.cs
 │   ├── Extensions.cs
