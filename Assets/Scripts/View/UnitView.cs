@@ -25,6 +25,8 @@ namespace ArmyClash.View
         private Rigidbody _rigidbody;
         private Collider _collider;
         private BattleState _battleState;
+        private MaterialPropertyBlock _propertyBlock;
+        private static readonly int ColorPropId = Shader.PropertyToID("_Color");
 
         // Attack tracking
         private float _lastAttackTime;
@@ -43,6 +45,7 @@ namespace ArmyClash.View
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody>();
+            _propertyBlock = new MaterialPropertyBlock();
         }
 
         public void Initialize(Unit model)
@@ -81,7 +84,7 @@ namespace ArmyClash.View
         private void SetupVisuals()
         {
             _baseColor = _config.GetColorValue(_model.Color);
-            _renderer.material.color = _baseColor;
+            UpdateRendererColor(_baseColor);
 
             float scale = _model.Size == UnitSize.Small
                 ? Constants.SMALL_UNIT_SCALE
@@ -98,6 +101,12 @@ namespace ArmyClash.View
             teamNumber.text = $"{_model.Team}";
         }
 
+        private void UpdateRendererColor(Color color)
+        {
+            _propertyBlock.SetColor(ColorPropId, color);
+            _renderer.SetPropertyBlock(_propertyBlock);
+        }
+
         private void Update()
         {
             if (_battleState.IsBattleActive && _model is { IsAlive: true })
@@ -110,11 +119,11 @@ namespace ArmyClash.View
                 {
                     float pulse = Mathf.PingPong(Time.time * 2f, 1f);
                     Color pulsedColor = Color.Lerp(_baseColor, Color.white, pulse * 0.3f);
-                    _renderer.material.color = pulsedColor;
+                    UpdateRendererColor(pulsedColor);
                 }
                 else
                 {
-                    _renderer.material.color = _baseColor;
+                    UpdateRendererColor(_baseColor);
                 }
 
                 if (healthBarTransform != null && Camera.main != null)
@@ -258,8 +267,12 @@ namespace ArmyClash.View
                 > 0.3f => Constants.COLOR_HEALTH_MID,
                 _ => Constants.COLOR_HEALTH_LOW
             };
-
-            healthBarRenderer.material.color = healthColor;
+            
+            if (healthBarRenderer != null)
+            {
+                _propertyBlock.SetColor(ColorPropId, healthColor);
+                healthBarRenderer.SetPropertyBlock(_propertyBlock);
+            }
         }
 
         private void OnUnitDeath(Unit unit)
@@ -314,12 +327,12 @@ namespace ArmyClash.View
         {
             if (_renderer == null) yield break;
 
-            Color originalColor = _renderer.material.color;
-            _renderer.material.color = Color.red;
+            Color originalColor = _renderer.material.color; // Note: Reading from material is okay for one-off, but let's try to be safe
+            UpdateRendererColor(Color.red);
 
             yield return new WaitForSeconds(0.1f);
 
-            _renderer.material.color = originalColor;
+            UpdateRendererColor(originalColor);
         }
 
         private void OnDestroy()

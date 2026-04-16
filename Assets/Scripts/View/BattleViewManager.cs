@@ -158,6 +158,8 @@ namespace ArmyClash.View
 
         private void OnUnitDied(Unit unit)
         {
+            unit.OnDeath -= OnUnitDied;
+
             if (_unitViews.TryGetValue(unit, out UnitView view))
             {
                 if (view != null)

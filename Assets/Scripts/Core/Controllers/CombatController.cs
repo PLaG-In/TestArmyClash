@@ -17,6 +17,8 @@ namespace ArmyClash.Core
         
         private readonly GameConfig _config;
         private readonly List<Unit> _allUnits = new List<Unit>();
+        private readonly HashSet<Unit> _team1Units = new HashSet<Unit>();
+        private readonly HashSet<Unit> _team2Units = new HashSet<Unit>();
         private readonly ITargetingStrategy _targetingStrategy;
         private readonly BattleState _battleState;
         private int _frameCount = 0;
@@ -31,12 +33,17 @@ namespace ArmyClash.Core
         public void RegisterUnit(Unit unit)
         {
             _allUnits.Add(unit);
+            if (unit.Team == Team.Team1) _team1Units.Add(unit);
+            else _team2Units.Add(unit);
+
             unit.OnDeath += OnUnitDeath;
         }
 
         public void UnregisterUnit(Unit unit)
         {
             _allUnits.Remove(unit);
+            _team1Units.Remove(unit);
+            _team2Units.Remove(unit);
             unit.OnDeath -= OnUnitDeath;
         }
 
@@ -47,23 +54,27 @@ namespace ArmyClash.Core
 
             _frameCount++;
 
-            foreach (var unit in _allUnits.Where(u => u.IsAlive).ToList())
+            if (_frameCount % Constants.TARGET_UPDATE_INTERVAL == 0)
             {
-                // Update target selection periodically
-                if (_frameCount % Constants.TARGET_UPDATE_INTERVAL == 0)
+                UpdateTargets(_team1Units);
+                UpdateTargets(_team2Units);
+            }
+        }
+
+        private void UpdateTargets(IEnumerable<Unit> units)
+        {
+            foreach (var unit in units)
+            {
+                if (unit.IsAlive && unit.Target is not { IsAlive: true })
                 {
-                    if (unit.Target is not { IsAlive: true })
-                    {
-                        unit.Target = _targetingStrategy.FindTarget(unit, GetEnemies(unit.Team));
-                    }
+                    unit.Target = _targetingStrategy.FindTarget(unit, GetEnemies(unit.Team).ToList());
                 }
             }
         }
 
-        private List<Unit> GetEnemies(Team team)
+        private IEnumerable<Unit> GetEnemies(Team team)
         {
-            Team enemyTeam = team == Team.Team1 ? Team.Team2 : Team.Team1;
-            return _allUnits.Where(u => u.Team == enemyTeam && u.IsAlive).ToList();
+            return team == Team.Team1 ? _team2Units : _team1Units;
         }
 
         private void OnUnitDeath(Unit unit)
@@ -73,7 +84,7 @@ namespace ArmyClash.Core
 
         public List<Unit> GetUnitsOfTeam(Team team)
         {
-            return _allUnits.Where(u => u.Team == team && u.IsAlive).ToList();
+            return team == Team.Team1 ? _team1Units.ToList() : _team2Units.ToList();
         }
 
         public void Clear()
